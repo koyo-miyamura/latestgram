@@ -35,5 +35,4 @@
 |content_id|T|F|
 |user_id|integer|T|F|
 |text|string|T|F|
-|password|string|T|F|
 |created_at|datetime|T|F|

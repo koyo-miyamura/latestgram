@@ -4,7 +4,7 @@ USE latestgram;
 CREATE TABLE IF NOT EXISTS `users` (
     id         INTEGER      PRIMARY KEY AUTO_INCREMENT,
     name       VARCHAR(191) NOT NULL UNIQUE,
-    passeord   VARCHAR(191) NOT NULL,
+    password   VARCHAR(191) NOT NULL,
     created_at DATETIME     NOT NULL
 );
 

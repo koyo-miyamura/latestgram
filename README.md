@@ -32,7 +32,7 @@
 |カラム名|属性|NN|UQ|
 |:--:|:--:|:--:|:--:|
 |id|integer|T|T|
-|content_id|T|F|
+|content_id|integer|T|F|
 |user_id|integer|T|F|
 |text|string|T|F|
 |created_at|datetime|T|F|

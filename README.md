@@ -25,7 +25,7 @@
 |id|integer|T|T|
 |user_id|integer|T|F|
 |image_path|string|T|F|
-|caption|string|T|F|
+|caption|string|F|F|
 |created_at|datetime|T|F|
 
 ### Comments

@@ -2,6 +2,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     mustermann (1.0.2)
+    mysql2 (0.5.0)
+    mysql2-cs-bind (0.0.6)
+      mysql2
     rack (2.0.4)
     rack-protection (2.0.1)
       rack
@@ -16,6 +19,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  mysql2
+  mysql2-cs-bind
   sinatra (= 2.0.1)
 
 BUNDLED WITH

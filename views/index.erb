@@ -1,5 +1,4 @@
 <main role="main">
-
     <section class="jumbotron">
     <div class="container">
         <div class="row">
@@ -22,25 +21,28 @@
 
     <div class="album py-5 bg-light">
     <div class="container">
-        <div class="row">
-            <div class="offset-2 col-md-8">
-                <div class="card mb-4 box-shadow">
-                <img class="card-img-top" src="http://placehold.it/500x200" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title"><b>user.name</b></h5>
-                    <p class="card-text">caption</p>
-                    <h6 class="mt-5"><b><i class="fa fa-comment"></i> コメント</b></h6>
-                    <div class="mb-3 comment">
-                        <h6 class="card-title"><b>comment.user.name</b></h6>
-                        <p class="card-text">comment.text</p>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">created at 1200</small>
+        <% @contents.each do |c| %>
+            <div class="row">
+                <div class="offset-2 col-md-8">
+                    <div class="card mb-4 box-shadow">
+                    <img class="card-img-top" src="http://placehold.it/500x200" alt="<%= c[:image_path] %>">
+                    <div class="card-body">
+                        <h5 class="card-title"><b><%= c[:user][:name] %></b></h5>
+                        <p class="card-text"><%= c[:caption] %></p>
+                        <h6 class="mt-5"><b><i class="fa fa-comment"></i> コメント</b></h6>
+                        <% c[:comments].each do |c_comment| %>
+                            <div class="mb-3 comment">
+                                <h6 class="card-title"><b><%= c_comment[:user][:name]%></b></h6>
+                                <p class="card-text"><%= c_comment[:text]%></p>
+                            </div>
+                        <% end %>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">created at 1200</small>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        <% end %>
     </div>
     </div>
-
 </main>

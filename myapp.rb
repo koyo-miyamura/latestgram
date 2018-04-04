@@ -72,6 +72,7 @@ class MyApp < Sinatra::Base
       # [{..., comment_created_at: 2018-04-03 18:44:04 +0900}, {..., comment_created_at: 2018-01-01 00:00:00 +0900}] 
       comments_users.sort_by {|hash| -hash[:comment_created_at].to_i}
       @contents.push({
+        content_id: cont_u["content_id"],
         image_path: cont_u["image_path"],
         caption:    cont_u["caption"],
         content_created_at: cont_u["content_created_at"],
@@ -107,6 +108,17 @@ class MyApp < Sinatra::Base
     # Generate message for flash
     flash[:status]   = "success"
     flash[:message]  = "Success your upload"
+    redirect '/'
+  end
+
+  post '/comment' do
+    content_id = params[:content_id]
+    user_id    = 1000
+    text       = params[:text]
+    created_at = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+    sql = "INSERT INTO comments (content_id, user_id, text, created_at) VALUES (?, ?, ?, ?)"
+    statement  = $client.prepare(sql)
+    statement.execute(content_id, user_id, text, created_at)
     redirect '/'
   end
 

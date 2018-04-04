@@ -31,14 +31,21 @@ class MyApp < Sinatra::Base
           LIMIT 50
           "
     contents_users = $client.query(sql)
-    #content_ids = contents_users.each
+    content_ids = []
+    contents_users.each {|c_u|
+      content_ids.push(c_u["content_id"])
+    }
     sql = "
           SELECT text, content_id, users.name AS name, comments.created_at AS comment_created_at
           FROM comments
           INNER JOIN users
           ON comments.user_id = users.id
+          WHERE content_id IN (?
           "
-    comments_users = $client.query(sql)
+    49.times {sql+=", ?"}
+    sql+=")"
+    comments_users = $client.prepare(sql)
+    comments_users = comments_users.execute(*content_ids)    
     @contents = []
     # contents-users relation
     contents_users.each do |cont_u|
@@ -72,6 +79,6 @@ class MyApp < Sinatra::Base
     @contents.sort_by {|hash| hash[:content_created_at]}
     erb :index
   end
-  
+
   run! if app_file == $0
 end

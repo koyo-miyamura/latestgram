@@ -28,7 +28,7 @@ class MyApp < Sinatra::Base
           FROM contents
           INNER JOIN users
           ON contents.user_id = users.id
-          ORDER BY contents.created_at
+          ORDER BY contents.id DESC
           LIMIT 50
           "
     contents_users = $client.xquery(sql)
@@ -60,9 +60,9 @@ class MyApp < Sinatra::Base
           })
         end
       end
-      # ASC by comment_created_at
-      # [{..., comment_created_at: 2018-01-01 00:00:00 +0900}, {..., comment_created_at: 2018-04-03 18:44:04 +0900}] 
-      comments_users.sort_by {|hash| hash[:comment_created_at]}
+      # DESC by comment_created_at
+      # [{..., comment_created_at: 2018-04-03 18:44:04 +0900}, {..., comment_created_at: 2018-01-01 00:00:00 +0900}] 
+      comments_users.sort_by {|hash| -hash[:comment_created_at].to_i}
       @contents.push({
         image_path: cont_u["image_path"],
         caption:    cont_u["caption"],
@@ -73,8 +73,8 @@ class MyApp < Sinatra::Base
         comments: contents_comments_users
       })
     end
-    # ASC by content_created_at
-    @contents.sort_by {|hash| hash[:content_created_at]}
+    # DESC by content_created_at
+    @contents.sort_by {|hash| -hash[:content_created_at].to_i}
     erb :index
   end
 

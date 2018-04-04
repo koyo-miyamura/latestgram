@@ -120,5 +120,13 @@ class MyApp < Sinatra::Base
     redirect '/'
   end
 
+  get '/signin' do
+    erb :signin, :layout => :layout_sign
+  end
+
+  get '/signup' do
+    erb :signup, :layout => :layout_sign
+  end
+
   run! if app_file == $0
 end

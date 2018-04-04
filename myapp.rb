@@ -103,8 +103,7 @@ class MyApp < Sinatra::Base
     end
     # Save Contents (DB)
     sql        = "INSERT INTO contents (user_id, image_path, caption, created_at) VALUES (?, ?, ?, ?)"
-    statement  = $client.prepare(sql)
-    statement.execute(user_id, db_image_path, caption, created_at)
+    $client.xquery(sql, user_id, db_image_path, caption, created_at)
     # Generate message for flash
     flash[:status]   = "success"
     flash[:message]  = "Success your upload"
@@ -117,8 +116,7 @@ class MyApp < Sinatra::Base
     text       = params[:text]
     created_at = Time.now.strftime("%Y-%m-%d %H:%M:%S")
     sql = "INSERT INTO comments (content_id, user_id, text, created_at) VALUES (?, ?, ?, ?)"
-    statement  = $client.prepare(sql)
-    statement.execute(content_id, user_id, text, created_at)
+    $client.xquery(sql, content_id, user_id, text, created_at)
     redirect '/'
   end
 

@@ -3,7 +3,7 @@
         <div class="container">
             <div class="row">
                 <div class="offset-2 col-md-8">
-                    <form>
+                    <form method="post" action="/upload">
                         <div class="form-group">
                             <label for="exampleInputEmail1">キャプション</label>
                             <input type="text" class="form-control" id="exampleInputEmail1" placeholder="caption">
@@ -36,6 +36,14 @@
                                         <p class="card-text"><%= h c_comment[:text]%></p>
                                     </div>
                                 <% end %>
+                                <form method="post" action="/comment">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="コメントの投稿">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary">投稿</button>
+                                        </div>
+                                    </div>
+                                </form>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <small class="text-muted"><%= h c[:content_created_at].strftime("%Y-%m-%d %H:%M:%S") %></small>
                                 </div>

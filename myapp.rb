@@ -3,7 +3,8 @@ require 'sinatra/base'
 require 'mysql2'
 require 'mysql2-cs-bind'
 require 'fileutils'
-require "rack-flash"
+require 'rack-flash'
+require 'openssl'
 
 class MyApp < Sinatra::Base
   enable :sessions
@@ -124,8 +125,24 @@ class MyApp < Sinatra::Base
     erb :signin, :layout => :layout_sign
   end
 
+  # post '/signin' do
+
+  # end
+
   get '/signup' do
     erb :signup, :layout => :layout_sign
+  end
+
+  post '/signup' do
+    username     = params[:username]
+    row_password = params[:password]
+    created_at   = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+    digest       = OpenSSL::Digest.new('sha256')
+    digest.update(row_password + created_at)
+    encrypted_password = digest.hexdigest()
+    sql = "INSERT INTO users (name, password, created_at) VALUES (?, ?, ?)"
+    $client.xquery(sql, username, encrypted_password, created_at)
+    redirect "/"
   end
 
   run! if app_file == $0

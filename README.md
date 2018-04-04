@@ -12,7 +12,7 @@
 * "Contents" has many "Comments"
 
 ### Users
-|カラム名|属性|NN|UQ|
+|カラム名|属性|NN|UQ|
 |:--:|:--:|:--:|:--:|
 |id|integer|T|T|
 |name|string|T|T|
@@ -20,7 +20,7 @@
 |created_at|datetime|T|F|
 
 ### Contents
-|カラム名|属性|NN|UQ|
+|カラム名|属性|NN|UQ|
 |:--:|:--:|:--:|:--:|
 |id|integer|T|T|
 |user_id|integer|T|F|
@@ -29,7 +29,7 @@
 |created_at|datetime|T|F|
 
 ### Comments
-|カラム名|属性|NN|UQ|
+|カラム名|属性|NN|UQ|
 |:--:|:--:|:--:|:--:|
 |id|integer|T|T|
 |content_id|integer|T|F|

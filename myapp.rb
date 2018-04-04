@@ -1,6 +1,7 @@
 # myapp.rb
 require 'sinatra/base'
 require 'mysql2'
+require 'mysql2-cs-bind'
 
 class MyApp < Sinatra::Base
   helpers do
@@ -30,7 +31,7 @@ class MyApp < Sinatra::Base
           ORDER BY contents.created_at
           LIMIT 50
           "
-    contents_users = $client.query(sql)
+    contents_users = $client.xquery(sql)
     content_ids = []
     contents_users.each {|c_u|
       content_ids.push(c_u["content_id"])
@@ -40,12 +41,9 @@ class MyApp < Sinatra::Base
           FROM comments
           INNER JOIN users
           ON comments.user_id = users.id
-          WHERE content_id IN (?
+          WHERE content_id IN (?)
           "
-    49.times {sql+=", ?"}
-    sql+=")"
-    comments_users = $client.prepare(sql)
-    comments_users = comments_users.execute(*content_ids)    
+    comments_users = $client.xquery(sql, content_ids)
     @contents = []
     # contents-users relation
     contents_users.each do |cont_u|

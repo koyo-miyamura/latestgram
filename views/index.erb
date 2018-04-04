@@ -3,14 +3,14 @@
         <div class="container">
             <div class="row">
                 <div class="offset-2 col-md-8">
-                    <form method="post" action="/upload">
+                    <form method="post" action="/upload" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="exampleInputEmail1">キャプション</label>
-                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="caption">
+                            <label for="caption">キャプション</label>
+                            <input type="text" class="form-control" id="caption" name="caption" placeholder="caption">
                         </div>
                         <div class="form-group">
                             <label for="File">画像</label>
-                            <input type="file" class="form-control-file" id="File">
+                            <input type="file" class="form-control-file" name="file" id="File">
                         </div>
                         <button type="submit" class="btn btn-primary">送信する</button>
                     </form>
@@ -18,14 +18,21 @@
             </div>
         </div>
     </section>
-
+    <% if flash[:status] %>
+        <div class="alert alert-<%= flash[:status] %> alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <strong><%= h flash[:status] %></strong> <%= h flash[:message] %>
+        </div>
+    <% end %>
     <div class="album py-5 bg-light">
         <div class="container">
             <% @contents.each do |c| %>
                 <div class="row">
                     <div class="offset-2 col-md-8">
                         <div class="card mb-4 box-shadow">
-                            <img class="card-img-top" src="http://placehold.it/500x200" alt="<%= c[:image_path] %>">
+                            <img class="card-img-top" src="<%= c[:image_path] %>" alt="image">
                             <div class="card-body">
                                 <h5 class="card-title"><b><%= h c[:user][:name] %></b></h5>
                                 <p class="card-text"><%= h c[:caption] %></p>

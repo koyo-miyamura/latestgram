@@ -54,3 +54,6 @@ build-iPhoneSimulator/
 
 # .vscode
 .vscode
+
+# public
+public/upload

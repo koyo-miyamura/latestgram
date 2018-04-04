@@ -11,6 +11,8 @@ GEM
     mysql2-cs-bind (0.0.6)
       mysql2
     rack (2.0.4)
+    rack-flash3 (1.0.5)
+      rack
     rack-protection (2.0.1)
       rack
     rb-fsevent (0.10.3)
@@ -32,6 +34,7 @@ PLATFORMS
 DEPENDENCIES
   mysql2
   mysql2-cs-bind
+  rack-flash3
   rerun
   sinatra (= 2.0.1)
 

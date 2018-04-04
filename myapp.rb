@@ -2,8 +2,13 @@
 require 'sinatra/base'
 require 'mysql2'
 require 'mysql2-cs-bind'
+require 'fileutils'
+require "rack-flash"
 
 class MyApp < Sinatra::Base
+  enable :sessions
+  use Rack::Flash
+  
   helpers do
     def db_connect()
       client = Mysql2::Client.new(
@@ -79,6 +84,30 @@ class MyApp < Sinatra::Base
     # DESC by content_created_at
     @contents.sort_by {|hash| -hash[:content_created_at].to_i}
     erb :index
+  end
+
+  post '/upload' do
+    # Get params
+    user_id    = 1000
+    image_ext  = params[:file][:type].split("/")[1]
+    image_dir    = "./public/upload/#{user_id}/image"
+    file_image_path = "#{image_dir}/#{Time.now().to_i}.#{image_ext}"
+    db_image_path   = file_image_path.split("/")[2..-1].join("/") # "./public/" isn't needed to display
+    caption    = (params[:caption]) ? params[:caption] : ""
+    created_at = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+    # Save image (file)
+    FileUtils.mkdir_p(image_dir) unless Dir.exist?(image_dir)
+    File.open(file_image_path, "wb") do |f|
+      f.write(params[:file][:tempfile].read)
+    end
+    # Save Contents (DB)
+    sql        = "INSERT INTO contents (user_id, image_path, caption, created_at) VALUES (?, ?, ?, ?)"
+    statement  = $client.prepare(sql)
+    statement.execute(user_id, db_image_path, caption, created_at)
+    # Generate message for flash
+    flash[:status]   = "success"
+    flash[:message]  = "Success your upload"
+    redirect '/'
   end
 
   run! if app_file == $0

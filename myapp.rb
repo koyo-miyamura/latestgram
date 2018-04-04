@@ -16,6 +16,9 @@ class MyApp < Sinatra::Base
       )
       return client
     end
+    def h(text)
+      Rack::Utils.escape_html(text)
+    end
   end
 
   before do

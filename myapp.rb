@@ -22,6 +22,23 @@ class MyApp < Sinatra::Base
       )
       return client
     end
+    def check_user(username, row_password, client)
+      sql = "SELECT * FROM users WHERE name=?"
+      users = client.xquery(sql, username)
+      user  = users.first()
+      unless user
+        return false
+      end
+      digest     = OpenSSL::Digest.new('sha256')
+      created_at = user["created_at"].strftime("%Y-%m-%d %H:%M:%S")
+      digest.update(row_password + created_at)
+      encrypted_password = digest.hexdigest()
+      if user["password"] == encrypted_password
+        return user
+      else
+        return false
+      end
+    end
     def h(text)
       Rack::Utils.escape_html(text)
     end
@@ -89,14 +106,26 @@ class MyApp < Sinatra::Base
   end
 
   post '/upload' do
+    # Validate params
+    unless params[:file]
+      flash[:style]   = "danger"
+      flash[:message] = "画像ファイルをアップロードしてください"
+      redirect '/'
+    end
     # Get params
-    user_id    = 1000
+    user_id    = session[:user_id]
     image_ext  = params[:file][:type].split("/")[1]
     image_dir    = "./public/upload/#{user_id}/image"
     file_image_path = "#{image_dir}/#{Time.now().to_i}.#{image_ext}"
     db_image_path   = file_image_path.split("/")[2..-1].join("/") # "./public/" isn't needed to display
     caption    = (params[:caption]) ? params[:caption] : ""
     created_at = Time.now.strftime("%Y-%m-%d %H:%M:%S")
+    # Validate ext
+    unless ["png", "jpg", "gif"].include?(image_ext)
+      flash[:style]   = "danger"
+      flash[:message] = "拡張子は .png, .jpg, .gif のいずれかにしてください"
+      redirect '/'
+    end
     # Save image (file)
     FileUtils.mkdir_p(image_dir) unless Dir.exist?(image_dir)
     File.open(file_image_path, "wb") do |f|
@@ -106,14 +135,19 @@ class MyApp < Sinatra::Base
     sql        = "INSERT INTO contents (user_id, image_path, caption, created_at) VALUES (?, ?, ?, ?)"
     $client.xquery(sql, user_id, db_image_path, caption, created_at)
     # Generate message for flash
-    flash[:status]   = "success"
+    flash[:style]    = "success"
     flash[:message]  = "Success your upload"
     redirect '/'
   end
 
   post '/comment' do
+    if params[:text] == ""
+      flash[:style]   = "danger"
+      flash[:message] = "コメントを記述してください"
+      redirect '/'
+    end
     content_id = params[:content_id]
-    user_id    = 1000
+    user_id    = session[:user_id]
     text       = params[:text]
     created_at = Time.now.strftime("%Y-%m-%d %H:%M:%S")
     sql = "INSERT INTO comments (content_id, user_id, text, created_at) VALUES (?, ?, ?, ?)"
@@ -122,12 +156,25 @@ class MyApp < Sinatra::Base
   end
 
   get '/signin' do
+    if session[:user_id]
+      redirect "/"
+    end
     erb :signin, :layout => :layout_sign
   end
 
-  # post '/signin' do
-
-  # end
+  post '/signin' do
+    # checkuser
+    user = check_user(params[:username], params[:password], $client)
+    if user
+      session[:user_id]  = user["id"]
+      session[:username] = user["name"]
+      redirect '/'
+    else
+      flash[:style]   = "danger"
+      flash[:message] = "ユーザ名またはパスワードが間違っています"
+      redirect "/signin"
+    end
+  end
 
   get '/signup' do
     erb :signup, :layout => :layout_sign
@@ -136,16 +183,36 @@ class MyApp < Sinatra::Base
   post '/signup' do
     username     = params[:username]
     row_password = params[:password]
+    if username == '' || row_password == ''
+      flash[:style]   = "danger"
+      flash[:message] = "ユーザ名またはパスワードを入力してください"
+      redirect '/signup'
+    end
+    if row_password.length < 6
+      flash[:style]   = "danger"
+      flash[:message] = "パスワードは6文字以上にしてください"
+      redirect '/signup'
+    end
+    sql = "SELECT * FROM users WHERE name=?"
+    user = $client.xquery(sql, username)
+    if user.first()
+      flash[:style]   = "danger"
+      flash[:message] = "すでに存在するユーザーです"
+      redirect '/signup'      
+    end
     created_at   = Time.now.strftime("%Y-%m-%d %H:%M:%S")
     digest       = OpenSSL::Digest.new('sha256')
     digest.update(row_password + created_at)
     encrypted_password = digest.hexdigest()
     sql = "INSERT INTO users (name, password, created_at) VALUES (?, ?, ?)"
     $client.xquery(sql, username, encrypted_password, created_at)
+    session[:username] = username
+    session[:user_id]  = $client.last_id
     redirect '/'
-    end
+  end
 
   get '/signout' do
+    session.clear
     redirect '/signin'
   end
 

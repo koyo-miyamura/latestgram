@@ -1,31 +1,26 @@
 <main role="main">
-    <section class="jumbotron">
-        <div class="container">
-            <div class="row">
-                <div class="offset-2 col-md-8">
-                    <form method="post" action="/upload" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="caption">キャプション</label>
-                            <input type="text" class="form-control" id="caption" name="caption" placeholder="caption">
-                        </div>
-                        <div class="form-group">
-                            <label for="File">画像</label>
-                            <input type="file" class="form-control-file" name="file" id="File">
-                        </div>
-                        <button type="submit" class="btn btn-primary">送信する</button>
-                    </form>
+    <% if session[:user_id] %>    
+        <section class="jumbotron">
+            <div class="container">
+                <div class="row">
+                    <div class="offset-2 col-md-8">
+                        <form method="post" action="/upload" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="caption">キャプション</label>
+                                <input type="text" class="form-control" id="caption" name="caption" placeholder="caption">
+                            </div>
+                            <div class="form-group">
+                                <label for="File">画像</label>
+                                <input type="file" class="form-control-file" name="file" id="File">
+                            </div>
+                            <button type="submit" class="btn btn-primary">送信する</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
-    <% if flash[:status] %>
-        <div class="alert alert-<%= flash[:status] %> alert-dismissible fade show" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <strong><%= h flash[:status] %></strong> <%= h flash[:message] %>
-        </div>
+        </section>
     <% end %>
+    <%= erb :flash %>
     <div class="album py-5 bg-light">
         <div class="container">
             <% @contents.each do |c| %>
@@ -46,15 +41,17 @@
                                         <p class="card-text"><%= h c_comment[:text]%></p>
                                     </div>
                                 <% end %>
-                                <form method="post" action="/comment">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" name="text" placeholder="コメントの投稿">
-                                        <input type="hidden" name="content_id" value="<%= c[:content_id] %>">
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-primary">投稿</button>
+                                <% if session[:user_id] %>
+                                    <form method="post" action="/comment">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="text" placeholder="コメントの投稿" required>
+                                            <input type="hidden" name="content_id" value="<%= c[:content_id] %>">
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-primary">投稿</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                <% end %>
                             </div>
                         </div>
                     </div>

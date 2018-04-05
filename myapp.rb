@@ -142,7 +142,11 @@ class MyApp < Sinatra::Base
     encrypted_password = digest.hexdigest()
     sql = "INSERT INTO users (name, password, created_at) VALUES (?, ?, ?)"
     $client.xquery(sql, username, encrypted_password, created_at)
-    redirect "/"
+    redirect '/'
+    end
+
+  get '/signout' do
+    redirect '/signin'
   end
 
   run! if app_file == $0

@@ -23,9 +23,8 @@ class MyApp < Sinatra::Base
       return client
     end
     def check_user(username, row_password, client)
-      sql = "SELECT * FROM users WHERE name=?"
-      users = client.xquery(sql, username)
-      user  = users.first()
+      sql  = "SELECT * FROM users WHERE name=?"
+      user = client.xquery(sql, username).first()
       unless user
         return false
       end

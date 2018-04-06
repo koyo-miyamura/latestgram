@@ -9,6 +9,9 @@ require 'openssl'
 class MyApp < Sinatra::Base
   #enable :sessions
   use Rack::Session::Cookie
+  use Rack::Session::Pool, :expire_after => 2592000
+  use Rack::Protection::RemoteToken
+  use Rack::Protection::SessionHijacking
   use Rack::Flash
   
   helpers do

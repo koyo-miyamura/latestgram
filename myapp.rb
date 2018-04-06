@@ -53,7 +53,7 @@ class MyApp < Sinatra::Base
 
   get '/' do
     sql = "
-          SELECT contents.id AS content_id, image_path, caption, users.name AS name, contents.created_at AS content_created_at 
+          SELECT contents.id AS content_id, image_path, caption, users.id AS user_id, users.name AS name, contents.created_at AS content_created_at 
           FROM contents
           INNER JOIN users
           ON contents.user_id = users.id
@@ -98,6 +98,7 @@ class MyApp < Sinatra::Base
         caption:    cont_u["caption"],
         content_created_at: cont_u["content_created_at"],
         user: {
+          id:   cont_u["user_id"],
           name: cont_u["name"]
         },
         comments: contents_comments_users
@@ -217,6 +218,22 @@ class MyApp < Sinatra::Base
   get '/signout' do
     session.clear
     redirect '/signin'
+  end
+
+  get '/user/:id' do
+    user_id = params[:id]
+    unless session[:id] != user_id
+      flash[:style]   = "danger"
+      flash[:message] = "この場所にアクセスする権限がありません"
+      redirect '/'
+    end
+    sql = "SELECT image_path FROM contents WHERE user_id=? ORDER BY id DESC"
+    user_contents = $client.xquery(sql, user_id)
+    @contents = []
+    user_contents.each do |u_c|
+      @contents.push({image_path: u_c["image_path"]})
+    end
+    erb :user
   end
 
   run! if app_file == $0

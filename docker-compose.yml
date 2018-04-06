@@ -9,6 +9,7 @@ services:
       - "4567:4567"
     depends_on:
       - db
+      - nginx
 
   nginx:
     image: nginx:latest
@@ -22,6 +23,7 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
       MYSQL_DATABASE: "latestgram"
+      MYSQL_USER: root
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
     ports:

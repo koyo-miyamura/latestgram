@@ -221,8 +221,11 @@ class MyApp < Sinatra::Base
   end
 
   get '/user/:id' do
-    user_id = params[:id]
-    unless session[:id] != user_id
+    user_id = params[:id].to_i
+    unless session[:user_id]
+      redirect "/"
+    end
+    unless session[:user_id] == user_id
       flash[:style]   = "danger"
       flash[:message] = "この場所にアクセスする権限がありません"
       redirect '/'

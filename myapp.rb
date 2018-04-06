@@ -121,7 +121,7 @@ class MyApp < Sinatra::Base
     caption    = (params[:caption]) ? params[:caption] : ""
     created_at = Time.now.strftime("%Y-%m-%d %H:%M:%S")
     # Validate ext
-    unless ["png", "jpg", "gif"].include?(image_ext)
+    unless ["png", "jpeg", "gif"].include?(image_ext)
       flash[:style]   = "danger"
       flash[:message] = "拡張子は .png, .jpg, .gif のいずれかにしてください"
       redirect '/'

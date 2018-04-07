@@ -1,0 +1,15 @@
+<div class="album py-5 bg-light">
+    <div class="container">
+        <% i=0 %>
+        <% @contents.each do |c| %>
+        <% if i%3 == 0 %><div class="row"><% end %>
+                <div class="col-md-4">
+                    <div class="card mb-4 box-shadow">
+                        <img class="card-img-top" src="<%= url(c[:image_path]) %>" alt="image">
+                    </div>
+                </div>
+        <% i+=1 %>
+        <% if i%3 == 0 %></div><% end %>
+        <% end %>
+    </div>
+</div>

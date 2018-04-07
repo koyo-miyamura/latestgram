@@ -7,13 +7,20 @@ require 'rack-flash'
 require 'openssl'
 
 class MyApp < Sinatra::Base
-  enable :sessions
+  set :bind, '0.0.0.0'
+  #enable :sessions
+  use Rack::Session::Cookie
+  use Rack::Session::Pool, :expire_after => 2592000
+  # use Rack::Protection::RemoteToken
+  # use Rack::Protection::SessionHijacking
   use Rack::Flash
   
   helpers do
     def db_connect()
       client = Mysql2::Client.new(
-        :host     => 'localhost',
+        #:host     => 'localhost',
+        :host     => '192.168.99.100',
+        #:port     => '3306',
         :username => 'root',
         :password => '',
         :database => 'latestgram',
@@ -49,7 +56,7 @@ class MyApp < Sinatra::Base
 
   get '/' do
     sql = "
-          SELECT contents.id AS content_id, image_path, caption, users.name AS name, contents.created_at AS content_created_at 
+          SELECT contents.id AS content_id, image_path, caption, users.id AS user_id, users.name AS name, contents.created_at AS content_created_at 
           FROM contents
           INNER JOIN users
           ON contents.user_id = users.id
@@ -68,7 +75,11 @@ class MyApp < Sinatra::Base
           ON comments.user_id = users.id
           WHERE content_id IN (?)
           "
-    comments_users = $client.xquery(sql, content_ids)
+    if content_ids.empty?
+      comments_users = []
+    else  
+      comments_users = $client.xquery(sql, content_ids)
+    end
     @contents = []
     # contents-users relation
     contents_users.each do |cont_u|
@@ -94,6 +105,7 @@ class MyApp < Sinatra::Base
         caption:    cont_u["caption"],
         content_created_at: cont_u["content_created_at"],
         user: {
+          id:   cont_u["user_id"],
           name: cont_u["name"]
         },
         comments: contents_comments_users
@@ -120,7 +132,7 @@ class MyApp < Sinatra::Base
     caption    = (params[:caption]) ? params[:caption] : ""
     created_at = Time.now.strftime("%Y-%m-%d %H:%M:%S")
     # Validate ext
-    unless ["png", "jpg", "gif"].include?(image_ext)
+    unless ["png", "jpeg", "gif"].include?(image_ext)
       flash[:style]   = "danger"
       flash[:message] = "拡張子は .png, .jpg, .gif のいずれかにしてください"
       redirect '/'
@@ -213,6 +225,25 @@ class MyApp < Sinatra::Base
   get '/signout' do
     session.clear
     redirect '/signin'
+  end
+
+  get '/user/:id' do
+    user_id = params[:id].to_i
+    unless session[:user_id]
+      redirect "/"
+    end
+    unless session[:user_id] == user_id
+      flash[:style]   = "danger"
+      flash[:message] = "この場所にアクセスする権限がありません"
+      redirect '/'
+    end
+    sql = "SELECT image_path FROM contents WHERE user_id=? ORDER BY id DESC"
+    user_contents = $client.xquery(sql, user_id)
+    @contents = []
+    user_contents.each do |u_c|
+      @contents.push({image_path: u_c["image_path"]})
+    end
+    erb :user
   end
 
   run! if app_file == $0

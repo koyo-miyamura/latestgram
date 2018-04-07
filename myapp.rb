@@ -7,17 +7,20 @@ require 'rack-flash'
 require 'openssl'
 
 class MyApp < Sinatra::Base
+  set :bind, '0.0.0.0'
   #enable :sessions
   use Rack::Session::Cookie
   use Rack::Session::Pool, :expire_after => 2592000
-  use Rack::Protection::RemoteToken
-  use Rack::Protection::SessionHijacking
+  # use Rack::Protection::RemoteToken
+  # use Rack::Protection::SessionHijacking
   use Rack::Flash
   
   helpers do
     def db_connect()
       client = Mysql2::Client.new(
-        :host     => 'localhost',
+        #:host     => 'localhost',
+        :host     => '192.168.99.100',
+        #:port     => '3306',
         :username => 'root',
         :password => '',
         :database => 'latestgram',
@@ -72,7 +75,11 @@ class MyApp < Sinatra::Base
           ON comments.user_id = users.id
           WHERE content_id IN (?)
           "
-    comments_users = $client.xquery(sql, content_ids)
+    if content_ids.empty?
+      comments_users = []
+    else  
+      comments_users = $client.xquery(sql, content_ids)
+    end
     @contents = []
     # contents-users relation
     contents_users.each do |cont_u|

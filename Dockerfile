@@ -6,8 +6,6 @@ ADD Gemfile /app/Gemfile
 ADD Gemfile.lock /app/Gemfile.lock
 
 RUN bundle install
-# CMD ["bundle", "update"]
-# CMD ["bundle", "install"]
 
 EXPOSE 4567
-CMD ["bundle", "exec", "ruby", "myapp.rb"]
+#CMD ["bundle", "exec", "ruby", "myapp.rb", "-o", "0.0.0.0"]

@@ -5,7 +5,6 @@ require 'mysql2-cs-bind'
 require 'fileutils'
 require 'rack-flash'
 require 'openssl'
-require "socket"
 
 class MyApp < Sinatra::Base
   set :bind, '0.0.0.0'
@@ -19,9 +18,8 @@ class MyApp < Sinatra::Base
   helpers do
     def db_connect()
       client = Mysql2::Client.new(
-        #:host     => 'localhost',
-        :host     => TCPSocket.gethostbyname("docker_ip").last,
-        #:port     => '3306',
+        :host     => 'db',
+        :port     => '3306',
         :username => 'root',
         :password => '',
         :database => 'latestgram',

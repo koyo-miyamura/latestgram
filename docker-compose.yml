@@ -9,11 +9,7 @@ services:
       - "4567:4567"
     depends_on:
       - db
-      - nginx
     command: bundle exec ruby myapp.rb -o 0.0.0.0
-    extra_hosts:
-      #- "docker_ip:${DOCKER_HOST}"
-      - "docker_ip:192.168.99.100"
 
   nginx:
     image: nginx:latest
@@ -22,8 +18,12 @@ services:
       - ./public:/var/www/html
     ports:
       - "8080:8080"
+    depends_on:
+      - web
     environment:
-        - DOCKER_IP=192.168.99.100
+        #- DOCKER_IP=192.168.99.100
+        #- DOCKER_IP=127.0.0.1
+        - DOCKER_IP=127.0.0.1
     command: /bin/bash -c "envsubst '$$DOCKER_IP' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
 
   db:

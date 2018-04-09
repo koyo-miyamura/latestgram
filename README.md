@@ -6,11 +6,11 @@
 最新50件の画像を表示する
 
 #### Quick Start
-`docker-compose up`してdockerに割り当てられているipでアクセス
+`docker-compose up`してdockerに割り当てられているip(docker_ipとする)の8080ポートでアクセス`docker_ip:8080`
 
-`192.168.99.100:8080`をデフォルトにしているので、Macなどで起動する場合(dockerのデフォルトipが`localhost`)は`docker-compose.yml`の`192.168.99.100`の部分(`DOCKER_IP`)を変更する
+例）docker for mac なら `localhost:8080`
 
-`192.168.99.100:4567`でnginx経由ではなく直接アクセス可
+`docker_ip:4567`でnginx経由ではなく直接アクセス可
 
 ## 構成
 * top

@@ -7,3 +7,4 @@ gem "rerun"
 gem "mysql2"
 gem 'mysql2-cs-bind'
 gem "rack-flash3"
+gem "rack-test"

@@ -13,7 +13,8 @@ class MyApp < Sinatra::Base
   use Rack::Session::Pool, :expire_after => 2592000
   # use Rack::Protection::RemoteToken
   # use Rack::Protection::SessionHijacking
-  use Rack::Flashq
+  use Rack::Protection
+  use Rack::Flash
   
   helpers do
     def db_connect()

@@ -31,7 +31,7 @@ class MyApp < Sinatra::Base
         :password => '',
         :database => 'latestgram',
         :encoding => 'utf8mb4',
-        :datatbase_timezone => :local
+        :datatbase_timezone => "Asia/Tokyo"
       )
       return client
     end

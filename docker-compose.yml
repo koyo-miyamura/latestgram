@@ -10,6 +10,8 @@ services:
     depends_on:
       - db
     command: bundle exec ruby myapp.rb -o 0.0.0.0
+    environment:
+      - "TZ=Asia/Tokyo"
 
   nginx:
     image: nginx:latest
@@ -22,13 +24,13 @@ services:
       - web
 
   db:
-    image: mysql:latest
+    build: ./sql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "true"
       MYSQL_DATABASE: "latestgram"
       MYSQL_USER: "root"
+      TZ: "Asia/Tokyo"
     volumes:
       - ./sql:/docker-entrypoint-initdb.d
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     ports:
       - "3306:3306"

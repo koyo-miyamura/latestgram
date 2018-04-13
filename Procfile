@@ -1,0 +1,1 @@
+web: bundle exec ruby myapp.rb -o 0.0.0.0

@@ -13,12 +13,19 @@ class MyApp < Sinatra::Base
   use Rack::Session::Pool, :expire_after => 2592000
   # use Rack::Protection::RemoteToken
   # use Rack::Protection::SessionHijacking
+  use Rack::Protection
   use Rack::Flash
   
   helpers do
     def db_connect()
+      if ENV['RACK_ENV'] == "test" || ENV['RACK_ENV'] == "development"
+        host = 'localhost'
+      else
+        host = 'db'
+      end
+
       client = Mysql2::Client.new(
-        :host     => 'db',
+        :host     => host,
         :port     => '3306',
         :username => 'root',
         :password => '',

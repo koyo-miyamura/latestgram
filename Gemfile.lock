@@ -1,30 +1,32 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    ffi (1.9.23)
+    ffi (1.9.25)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
     mustermann (1.0.2)
-    mysql2 (0.5.0)
+    mysql2 (0.5.2)
     mysql2-cs-bind (0.0.6)
       mysql2
-    rack (2.0.4)
+    rack (2.0.5)
     rack-flash3 (1.0.5)
       rack
-    rack-protection (2.0.1)
+    rack-protection (2.0.3)
       rack
+    rack-test (1.1.0)
+      rack (>= 1.0, < 3)
     rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     rerun (0.13.0)
       listen (~> 3.0)
     ruby_dep (1.5.0)
-    sinatra (2.0.1)
+    sinatra (2.0.3)
       mustermann (~> 1.0)
       rack (~> 2.0)
-      rack-protection (= 2.0.1)
+      rack-protection (= 2.0.3)
       tilt (~> 2.0)
     tilt (2.0.8)
 
@@ -35,8 +37,9 @@ DEPENDENCIES
   mysql2
   mysql2-cs-bind
   rack-flash3
+  rack-test
   rerun
-  sinatra (= 2.0.1)
+  sinatra (= 2.0.3)
 
 BUNDLED WITH
-   1.16.1
+   1.16.3
